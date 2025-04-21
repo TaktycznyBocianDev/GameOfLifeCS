@@ -30,7 +30,7 @@ The application uses `Raylib-cs` for graphics rendering and input handling.
 
 Created with ❤️ using Raylib-cs.
 
-Inspired by the classic [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
+Inspired by the classic [Conway's Game of Life]([https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life]).
 
 ## 📄 License
 
