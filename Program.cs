@@ -1,26 +1,33 @@
-﻿using Raylib_cs;
+﻿using GameOfLifeCS;
+using Raylib_cs;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 class Program
 {
     static void Main()
     { 
-        const int screenWidth = 800;
-        const int screenHeight = 600;
+        const int screenSize = 800;
 
-        Raylib.InitWindow(screenWidth, screenHeight, "Raylib-CS: Starter Template");
+        int gridSize = 10;
+        int cellSize = screenSize/gridSize;
+
+        World world = new World(gridSize, cellSize);
+
+        Raylib.InitWindow(screenSize, screenSize, "Game Of Life");
         Raylib.SetTargetFPS(60);
 
         while (!Raylib.WindowShouldClose())
         {
             // LOGIKA GRY TU
-            Update();
+
+            MouseClickOnGrid(world, cellSize);
 
             // RYSOWANIE TU
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.DarkGray);
 
-            Draw();
+            world.DrawGrid();
 
             Raylib.EndDrawing();
         }
@@ -28,10 +35,20 @@ class Program
         Raylib.CloseWindow();
     }
 
-    static void Update()
+    public static void MouseClickOnGrid(World world, int cellSize)
     {
-        // np. porusz obiekt
+        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+        {
+            Vector2 mousePos = Raylib.GetMousePosition();
+
+            int x = (int)(mousePos.X / cellSize);
+            int y = (int)(mousePos.Y / cellSize);
+
+            world.ChangeStateSimple(x, y);
+
+        }
     }
+
 
     static void Draw()
     {
