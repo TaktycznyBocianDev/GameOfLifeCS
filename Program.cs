@@ -9,26 +9,33 @@ class Program
     { 
         const int screenSize = 800;
 
-        int gridSize = 10;
+        int gridSize = 800;
         int cellSize = screenSize/gridSize;
 
         World world = new World(gridSize, cellSize);
 
         Raylib.InitWindow(screenSize, screenSize, "Game Of Life");
-        Raylib.SetTargetFPS(60);
+        Raylib.SetTargetFPS(20);
+
+        bool paused = true;
 
         while (!Raylib.WindowShouldClose())
         {
-            // LOGIKA GRY TU
-
-            MouseClickOnGrid(world, cellSize);
-
-            // RYSOWANIE TU
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.DarkGray);
 
-            world.DrawGrid();
+            if (Raylib.IsKeyPressed(KeyboardKey.Space))
+                paused = !paused;
 
+
+            
+            if (paused) MouseClickOnGrid(world, cellSize);
+
+            world.DrawGrid();
+            Raylib.DrawText(paused ? "PAUSED (SPACE to run)" : "RUNNING (SPACE to pause)", 10, 10, 20, Color.RayWhite);
+            
+            if (!paused) world.GameOfLife();
+           
             Raylib.EndDrawing();
         }
 
@@ -45,6 +52,8 @@ class Program
             int y = (int)(mousePos.Y / cellSize);
 
             world.ChangeStateSimple(x, y);
+
+            Console.WriteLine("Click: " + x + ", " + y);
 
         }
     }
