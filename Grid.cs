@@ -9,9 +9,9 @@ namespace GameOfLifeCS
     public class World
     {
 
-        State[,] Grid {get; set;}
-        int GridSize { get; set;}
-        int CellSize { get; set;}
+        State[,] Grid { get; set; }
+        int GridSize { get; set; }
+        int CellSize { get; set; }
 
         private readonly int randomChance;
         private readonly Random random = new();
@@ -28,17 +28,17 @@ namespace GameOfLifeCS
         /// <param name="GridSize">Size of the grid → [size, size].</param>
         /// <param name="CellSize">Size of the one cell in pixels.</param>
         /// <param name="randomChance">Integer between 0 and 100. The bigger, then bigger the chance for alive cells. Will change values lower than 0 and bigger than 100 to 100.</param>
-        public World(int GridSize, int CellSize, int randomChance) 
+        public World(int GridSize, int CellSize, int randomChance)
         {
-        
+
             //Setting new grid
             Grid = new State[GridSize, GridSize];
             this.GridSize = GridSize;
             this.CellSize = CellSize;
 
-            if (randomChance > 100 || randomChance < 0 ) randomChance = 100;
+            if (randomChance > 100 || randomChance < 0) randomChance = 100;
             this.randomChance = randomChance;
-            
+
             Grid = SetAllDead(Grid);
             Grid = SetRandAlive(Grid);
 
@@ -49,12 +49,12 @@ namespace GameOfLifeCS
         /// </summary>
         /// <param name="grid">The grid to change.</param>
         /// <returns>Grid with all cells set as dead.</returns>
-        private State[,] SetAllDead(State[,] grid) 
+        private State[,] SetAllDead(State[,] grid)
         {
             for (int i = 0; i < GridSize; i++)
             {
-                for(int j = 0; j < GridSize; j++)
-                    grid[i,j] = State.Dead;
+                for (int j = 0; j < GridSize; j++)
+                    grid[i, j] = State.Dead;
             }
             return grid;
         }
@@ -102,7 +102,7 @@ namespace GameOfLifeCS
                             Raylib.DrawRectangle(x, y, CellSize, CellSize, Color.DarkGray);
                             break;
                     }
-                   
+
 
                     Raylib.DrawRectangleLines(x, y, CellSize, CellSize, Color.Black);
                 }
@@ -115,8 +115,8 @@ namespace GameOfLifeCS
         /// <param name="y">The y coordinate for the cell.</param>
         public void ChangeStateSimple(int x, int y)
         {
-            if (Grid[x,y] == State.Dead) Grid[x,y] = State.Alive;
-            else if (Grid[x,y] == State.Alive) Grid[x,y] = State.Dead;
+            if (Grid[x, y] == State.Dead) Grid[x, y] = State.Alive;
+            else if (Grid[x, y] == State.Alive) Grid[x, y] = State.Dead;
         }
         /// <summary>
         /// The most important function of this class. It creates a copy of the current grid and creates a new one; then performs calculations and sets the new grid as the Grid with updated states of the cells. Skips edge cases because of yes (I don't want to do them).
@@ -133,21 +133,21 @@ namespace GameOfLifeCS
                 for (int j = 1; j < Grid.GetLength(1) - 1; j++)
                 {
 
-                    (int live, int dead) = CountNeighbours(currentGrid, i, j); 
+                    (int live, int dead) = CountNeighbours(currentGrid, i, j);
 
-                    if (Grid[i,j] == State.Dead && live == 3)
+                    if (Grid[i, j] == State.Dead && live == 3)
                     {
                         newGrid[i, j] = State.Alive;
                     }
-                    else if(Grid[i,j] == State.Alive && live < 2)
+                    else if (Grid[i, j] == State.Alive && live < 2)
                     {
-                        newGrid[i,j] = State.Dead;
+                        newGrid[i, j] = State.Dead;
                     }
-                    else if (Grid[i,j] == State.Alive && (live == 2 || live == 3))
+                    else if (Grid[i, j] == State.Alive && (live == 2 || live == 3))
                     {
                         newGrid[i, j] = State.Alive;
                     }
-                    else if (Grid[i,j] == State.Alive && live > 3)
+                    else if (Grid[i, j] == State.Alive && live > 3)
                     {
                         newGrid[i, j] = State.Dead;
                     }
@@ -182,7 +182,7 @@ namespace GameOfLifeCS
             else dead++;
 
             //LEFT
-            if (currentGrid[x -1, y] == State.Alive) live++;
+            if (currentGrid[x - 1, y] == State.Alive) live++;
             else dead++;
 
             //RIGHT
@@ -203,5 +203,52 @@ namespace GameOfLifeCS
 
             return (live, dead);
         }
+
+        public void DrawLine((int x, int y) pointA, (int x, int y) pointB)
+        {
+            
+            int deltaX = Math.Abs(pointB.x - pointA.x);
+            int deltaY = Math.Abs(pointB.y - pointA.y);
+
+            int stepX = (pointA.x < pointB.x) ? 1 : -1;
+            int stepY = (pointA.y < pointB.y) ? 1 : -1;
+
+            int err = deltaX - deltaY;
+
+            int x = pointA.x;
+            int y = pointA.y;
+
+            List<(int x,int y)> cells = new List<(int,int)> ();
+
+            while(true)
+            {
+                cells.Add((x,y));
+
+                if (x == pointB.x && y == pointB.y) break;
+
+                int maxErr = err * 2;
+                if (maxErr > -deltaY)
+                {
+                    err -= deltaY;
+                    x += stepX;
+                }
+                if (maxErr < deltaX)
+                {
+                    err += deltaX;
+                    y += stepY;
+                }
+
+            }
+            
+            foreach (var cell in cells)
+            {
+                if (Grid[cell.x, cell.y] == State.Dead)
+                {
+                    ChangeStateSimple(cell.x, cell.y);
+                }
+            }
+
+        }
+
     }
 }
