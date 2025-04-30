@@ -37,7 +37,7 @@ namespace GameOfLifeCS
                 if (paused) MouseClickOnGrid(world, cellSize);
                 if (paused && Raylib.IsMouseButtonReleased(MouseButton.Right))
                 {
-                    if (!firstPointMarked)
+                    if (!firstPointMarked) 
                     {
                         firstLinePointPos = Raylib.GetMousePosition();
                         Vector2 mousePos = Raylib.GetMousePosition();
@@ -49,7 +49,7 @@ namespace GameOfLifeCS
 
                         firstPointMarked = true;
                     }
-                    else
+                    else 
                     {
                         secondLinePointPos = Raylib.GetMousePosition();
                         CreateLine(firstLinePointPos, secondLinePointPos, world, cellSize);
