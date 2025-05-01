@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using System.Numerics;
 
 namespace GameOfLifeCS
 {
@@ -203,28 +204,32 @@ namespace GameOfLifeCS
 
             return (live, dead);
         }
-
-        public void DrawLine((int x, int y) pointA, (int x, int y) pointB)
+        /// <summary>
+        /// Finds and set as alive all cells between two points, making a line from start point to the end point.
+        /// </summary>
+        /// <param name="startPoint">Where we start?</param>
+        /// <param name="endPoint">Where are we going to?</param>
+        public void DrawLine(Vector2 startPoint, Vector2 endPoint)
         {
             
-            int deltaX = Math.Abs(pointB.x - pointA.x);
-            int deltaY = Math.Abs(pointB.y - pointA.y);
+            int deltaX = (int)Math.Abs(endPoint.X - startPoint.X);
+            int deltaY = (int)Math.Abs(endPoint.Y - startPoint.Y);
 
-            int stepX = (pointA.x < pointB.x) ? 1 : -1;
-            int stepY = (pointA.y < pointB.y) ? 1 : -1;
+            int stepX = (startPoint.X < endPoint.X) ? 1 : -1;
+            int stepY = (startPoint.Y < endPoint.Y) ? 1 : -1;
 
             int err = deltaX - deltaY;
 
-            int x = pointA.x;
-            int y = pointA.y;
+            int x = (int)startPoint.X;
+            int y = (int)startPoint.Y;
 
-            List<(int x,int y)> cells = new List<(int,int)> ();
+            List<Vector2> cells = new List<Vector2> ();
 
             while(true)
             {
-                cells.Add((x,y));
+                cells.Add(new Vector2(x,y));
 
-                if (x == pointB.x && y == pointB.y) break;
+                if (x == (int)endPoint.X && y == (int)endPoint.Y) break;
 
                 int maxErr = err * 2;
                 if (maxErr > -deltaY)
@@ -242,9 +247,9 @@ namespace GameOfLifeCS
             
             foreach (var cell in cells)
             {
-                if (Grid[cell.x, cell.y] == State.Dead)
+                if (Grid[(int)cell.X, (int)cell.Y] == State.Dead)
                 {
-                    ChangeStateSimple(cell.x, cell.y);
+                    ChangeStateSimple((int)cell.X, (int)cell.Y);
                 }
             }
 
